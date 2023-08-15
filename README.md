@@ -1,4 +1,4 @@
-# NeoGuard Database Security System 🛡️
+# NeoGuard Secure Database System 🛡️
 
 **Welcome to NeoGuard! Your data's new best friend.** 🚀
 
