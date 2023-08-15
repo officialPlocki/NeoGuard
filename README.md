@@ -12,7 +12,6 @@ At the heart of NeoGuard is the DataHandler component – the guardian of encryp
 
 - **Data encryption and decryption for the digital age's secret conversations.** 🔐
 - **Dynamic key management with a time-enforced bouncer for unauthorized guests.** ⏰
-- **Multi-threaded request handling – because NeoGuard loves multitasking.** 🚄
 
 ### Client Authentication 🤝
 
