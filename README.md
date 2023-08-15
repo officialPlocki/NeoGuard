@@ -84,4 +84,6 @@ Feel free to further customize the styling and content to your preference! 😊
 
 
 Btw, I'm not very good at designing.
+
+
 ChatGPT did a great job there, lol
