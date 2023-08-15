@@ -81,3 +81,7 @@ Contributions to this project are not accepted, as the source code is closed. Th
 ```
 
 Feel free to further customize the styling and content to your preference! 😊
+
+
+Btw, I'm not very good at designing.
+ChatGPT did a great job there, lol
