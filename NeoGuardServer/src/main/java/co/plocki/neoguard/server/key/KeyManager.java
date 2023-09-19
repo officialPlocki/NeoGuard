@@ -1,6 +1,7 @@
 package co.plocki.neoguard.server.key;
 
 import co.plocki.json.JSONFile;
+import co.plocki.neoguard.server.NeoGuard;
 import org.json.JSONArray;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class KeyManager {
 
     public List<Object> registerKey() throws Exception {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        String encryptedKeyString = new String(generateRandomPassword(16).getBytes(StandardCharsets.UTF_8));
+        String encryptedKeyString = new String(generateRandomPassword(NeoGuard.pass_length).getBytes(StandardCharsets.UTF_8));
 
         encryptedKeys.add(new String(Base64.getDecoder().decode(encryptedKeyString)));
         saveEncryptedKeysToFile();

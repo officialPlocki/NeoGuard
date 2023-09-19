@@ -4,6 +4,7 @@ import co.plocki.json.JSONFile;
 import co.plocki.json.JSONValue;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Config {
@@ -13,16 +14,16 @@ public class Config {
     public Config() {
         config = new JSONFile(
 
-                "config.json",
+                "config/server-config.json",
                 new JSONValue() {
                     @Override
                     public JSONObject object() {
                         JSONObject object = new JSONObject();
-                        object.put("aes", 256);
-                        object.put("tls", false);
-                        object.put("keypass_length", 2048);
-                        object.put("local_access_only", true);
-                        object.put("save_files_encrypted", false);
+                        object.put("ssl", "false");
+                        object.put("pass_length", "16");
+                        object.put("local_access_only", "true");
+                        object.put("ssl_cert", "ssl" + File.separator + "certificate.crt");
+                        object.put("ssl_key", "ssl" + File.separator + "private-key.key");
 
                         return object;
                     }
@@ -37,8 +38,8 @@ public class Config {
                     @Override
                     public JSONObject object() {
                         JSONObject object = new JSONObject();
-                        object.put("port", 5551);
-                        object.put("host", "localhost");
+                        object.put("port", "5551");
+                        object.put("host", "0.0.0.0");
 
                         return object;
                     }

@@ -21,6 +21,23 @@ public class DataHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) {
+        
+        if(NeoGuard.local_only) {
+            System.out.println(exchange.getSourceAddress().getHostName());
+            if(!exchange.getSourceAddress().getHostName().contains("0.0.0.0") && !exchange.getSourceAddress().getHostName().contains("127.0.0.1") && !exchange.getSourceAddress().getHostName().contains(exchange.getHostName())) {
+                JSONObject respDataObj = new JSONObject();
+                respDataObj.put("status-code", "NO-ACCESS");
+                respDataObj.put("message", "This NeoGuard server is not configured for public access.");
+
+                JSONObject responseBody = new JSONObject();
+                responseBody.put("status-code", "FAILED");
+                responseBody.put("data", respDataObj);
+
+                sendResponse(exchange, 200, responseBody.toString());
+                return;
+            }
+        }
+
         debug("Received request: " + exchange.getRequestMethod() + " " + exchange.getRequestURI());
 
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod().toString())) {
@@ -83,6 +100,7 @@ public class DataHandler implements HttpHandler {
 
             } else if (exchange.getRequestHeaders().contains("CONNECT")) {
                 exchange.getRequestReceiver().receiveFullString((httpServerExchange, requestData) -> {
+                    debug(requestData);
                     NeoGuard.runningProcesses += 1;
 
                     JSONObject object = new JSONObject(requestData).getJSONObject("data");

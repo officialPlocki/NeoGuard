@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class DataProcessor {
 
@@ -62,7 +63,7 @@ public class DataProcessor {
                 String updateThread = request.getString("dataThread");
                 String updateArray = request.getString("array");
                 String updateRow = request.getString("row");
-                String newData = request.getString("newData");
+                Object newData = request.getString("newData");
                 response = DataProcessor.updateRow(updateThread, updateArray, updateRow, newData);
                 break;
             case "delete":
@@ -152,7 +153,11 @@ public class DataProcessor {
 
                                 String location = rowDataLocation.getString("location");
 
-                                rowObj.put("location", location);
+                                //JUMP HERE
+
+                                Object data = NeoGuard.getDataCache().getData(location);
+
+                                rowObj.put("data", data);
                                 rowDataArray.put(rowObj);
                             } else {
                                 debug("rowDataLocation is null for thread: " + requestedThread + ", array: " + array + ", row: " + rowKey);
@@ -208,7 +213,12 @@ public class DataProcessor {
                         debug("Row " + i + " already exists in thread " + requestedThread + ", array " + array);
                         continue;
                     }
-                    binaryManager.addRow(requestedThread, array, String.valueOf(i), rowData.toString());
+
+                    String dataKey = UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID();
+                    dataKey = dataKey.replaceAll("-", "");
+
+                    binaryManager.addRow(requestedThread, array, String.valueOf(i), dataKey);
+                    NeoGuard.getDataCache().updateData(dataKey, rowData);
                 }
             }
 
@@ -295,6 +305,7 @@ public class DataProcessor {
 
         if (binaryManager.hasRow(requestedThread, array, row)) {
             // Delete the row
+            NeoGuard.getDataCache().deleteData(binaryManager.getRowData(requestedThread, array, row).getString("location"));
             binaryManager.removeRow(requestedThread, array, Integer.parseInt(row));
 
             JSONObject responseObj = new JSONObject();
@@ -324,12 +335,12 @@ public class DataProcessor {
         }
     }
 
-    public static JSONObject updateRow(String requestedThread, String array, String row, String newData) {
+    public static JSONObject updateRow(String requestedThread, String array, String row, Object newData) {
         debug("Calling 'updateRow' method in DataProcessor class.");
 
         if (binaryManager.hasRow(requestedThread, array, row)) {
             // Update the row data
-            binaryManager.addRow(requestedThread, array, row, newData);
+            NeoGuard.getDataCache().updateData(binaryManager.getRowData(requestedThread, array, row).getString("location"), newData);
 
             JSONObject responseObj = new JSONObject();
             responseObj.put("responseType", "UPDATE-RESULT");

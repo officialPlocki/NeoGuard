@@ -136,8 +136,12 @@ public class BinaryManager {
     }
 
     public boolean hasArray(String thread, String array) {
-        JSONObject threadObject = binary.get(thread);
-        return threadObject.has(array);
+        try {
+            JSONObject threadObject = binary.get(thread);
+            return threadObject.has(array);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public boolean hasRow(String thread, String array, String row) {
@@ -164,16 +168,20 @@ public class BinaryManager {
     }
 
     public List<String> searchArrays(String searchTerm, String thread) {
-        List<String> matchingArrays = new ArrayList<>();
-        JSONObject threadObject = binary.get(thread);
+        try {
+            List<String> matchingArrays = new ArrayList<>();
+            JSONObject threadObject = binary.get(thread);
 
-        for (String array : threadObject.keySet()) {
-            if (array.contains(searchTerm)) {
-                matchingArrays.add(array);
+            for (String array : threadObject.keySet()) {
+                if (array.contains(searchTerm)) {
+                    matchingArrays.add(array);
+                }
             }
-        }
 
-        return matchingArrays;
+            return matchingArrays;
+        } catch (Exception ex) {
+            return new ArrayList<>();
+        }
     }
 
 
