@@ -24,10 +24,13 @@ public class NeoGuard {
     public static boolean debug;
     public static boolean local_only;
     public static int pass_length;
+    private static NeoGuard runningInstance;
 
     public static volatile int runningProcesses = 0;
 
-    public void start() throws Exception {
+    public void start(NeoGuard classInstance) throws Exception {
+        runningInstance = classInstance;
+
         displayStartingInfo();
 
         displayLoadingAnimation();
@@ -115,6 +118,13 @@ public class NeoGuard {
         }
 
         System.out.println(); // Print a new line after the animation
+    }
+
+    public static void fixRuntimeError() throws Exception {
+        if(runningInstance.server != null) {
+            runningInstance.stop();
+        }
+        runningInstance.start(runningInstance);
     }
 
     public static DataCache getDataCache() {

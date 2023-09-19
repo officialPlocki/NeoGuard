@@ -2,6 +2,7 @@ package co.plocki.neoguard.server.cache;
 
 import co.plocki.json.JSONFile;
 import co.plocki.json.JSONValue;
+import co.plocki.neoguard.server.NeoGuard;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -19,7 +20,16 @@ public class DataCache {
                 try {
                     Thread.sleep(32000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+
+                    try {
+                        NeoGuard.fixRuntimeError();
+                    } catch (Exception ex) {
+                        NeoGuard.getBinaryManager().save();
+
+                        System.exit(3);
+                        System.err.println("Error on fixing Runtime");
+                        return;
+                    }
                 }
 
                 objectTime.forEach((file, time) -> {

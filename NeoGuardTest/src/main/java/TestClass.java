@@ -17,7 +17,7 @@ public class TestClass {
         System.setProperty("java.net.debug", "all");
 
         NeoGuard neoGuard = new NeoGuard();
-        neoGuard.start();
+        neoGuard.start(neoGuard);
 
         NeoGuardClient client = new NeoGuardClient();
 
@@ -95,7 +95,9 @@ public class TestClass {
         long totalTime = endTime - startTime;
 
         System.out.println("All requests completed in " + totalTime + " milliseconds.");
-        System.exit(3);
+        neoGuard.stop();
+        System.exit(4);
+
     }
 
     private static List<NeoArray> generateNeoArrays(int count) {
