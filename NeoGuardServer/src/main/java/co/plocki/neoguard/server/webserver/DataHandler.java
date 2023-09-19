@@ -23,7 +23,7 @@ public class DataHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) {
         
         if(NeoGuard.local_only) {
-            System.out.println(exchange.getSourceAddress().getHostName());
+            debug(exchange.getSourceAddress().getHostName());
             if(!exchange.getSourceAddress().getHostName().contains("0.0.0.0") && !exchange.getSourceAddress().getHostName().contains("127.0.0.1") && !exchange.getSourceAddress().getHostName().contains(exchange.getHostName())) {
                 JSONObject respDataObj = new JSONObject();
                 respDataObj.put("status-code", "NO-ACCESS");

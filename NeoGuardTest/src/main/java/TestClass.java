@@ -40,7 +40,7 @@ public class TestClass {
         System.out.println("testing output search array: " + new NeoArray(null).searchArrays("t3", "test1"));
         System.out.println("testing output delete thread: " + new NeoThread(null).deleteThread("test1"));
         System.out.println("testing output search thread: " + new NeoThread(null).searchThreads("test1"));
-/*
+
         Random random = new Random();
 
         int numberOfRequests = 100000;
@@ -53,34 +53,36 @@ public class TestClass {
             long requestStartTime = System.currentTimeMillis();
             updateLoadingAnimation(i, numberOfRequests);
 
-            String threadName = "thread_" + UUID.randomUUID();
-            List<String> arrayNames = generateRandomArrayNames(random.nextInt(3) + 1);
-            List<String> arrayData = generateRandomArrayData(arrayNames.size());
+            String threadName = "test" + (i + 1);
+            List<NeoArray> neoArrays = generateNeoArrays(random.nextInt(3) + 1);
+            List<String> arrayData = generateRandomArrayData(neoArrays.size());
 
             // Simulate different request types randomly
             int requestType = random.nextInt(8);
             switch (requestType) {
                 case 0:
-                    client.post(threadName, arrayNames, arrayData);
+                    new NeoPost(new NeoThread(threadName), neoArrays, arrayData);
                     break;
                 case 1:
                 case 2:
-                    client.request(threadName, arrayNames);
+                    new NeoRequest(new NeoThread(threadName), neoArrays);
                     break;
                 case 3:
-                    String searchTerm = "t" + (random.nextInt(3) + 1);
-                    client.searchArrays(searchTerm, threadName);
+                    new NeoArray(null).searchArrays("t1", threadName);
                     break;
                 case 4:
                 case 5:
-                    int rowIndex = random.nextInt(arrayNames.size());
-                    client.deleteRow(threadName, arrayNames.get(rowIndex), Integer.toString(rowIndex));
+                    NeoRow neoRow = new NeoRow();
+                    int rowIndex = random.nextInt(neoArrays.size());
+                    neoRow.deleteRow(threadName, neoArrays.get(rowIndex).getName(), Integer.toString(rowIndex));
                     break;
                 case 6:
-                    client.deleteArray(threadName, arrayNames.get(0));
+                    NeoArray neoArrayDelete = new NeoArray(null);
+                    neoArrayDelete.deleteArray(threadName, neoArrays.get(0).getName());
                     break;
                 case 7:
-                    client.updateRow(threadName, arrayNames.get(0), "0", "td" + random.nextInt(1000));
+                    NeoRow neoRowUpdate = new NeoRow();
+                    neoRowUpdate.updateRow(threadName, neoArrays.get(0).getName(), "0", "td" + random.nextInt(1000));
                     break;
             }
 
@@ -93,15 +95,16 @@ public class TestClass {
         long totalTime = endTime - startTime;
 
         System.out.println("All requests completed in " + totalTime + " milliseconds.");
-        System.exit(3);*/
+        System.exit(3);
     }
 
-    private static List<String> generateRandomArrayNames(int count) {
-        List<String> arrayNames = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            arrayNames.add("array_" + UUID.randomUUID());
+    private static List<NeoArray> generateNeoArrays(int count) {
+        List<NeoArray> neoArrays = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            NeoArray neoArray = new NeoArray("t" + i);
+            neoArrays.add(neoArray);
         }
-        return arrayNames;
+        return neoArrays;
     }
 
     private static List<String> generateRandomArrayData(int count) {
