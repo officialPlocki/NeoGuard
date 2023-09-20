@@ -101,7 +101,7 @@ By using NeoGuard, you acknowledge that security is a journey, not a destination
 
 ## License 🔐
 
-This project is under a closed-source license – sorry, we're not sharing the magic spell book. 📜🧙‍♂️
+This project is under the Apache 2.0 License.
 
 ## Contributions 🤝
 
