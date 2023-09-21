@@ -198,25 +198,25 @@ public class DataProcessor {
                 if (binaryManager.hasArray(requestedThread, array)) {
                     // Skip processing if array already exists
                     debug("Array " + array + " already exists in thread " + requestedThread);
-                    continue;
+                } else {
+                    // Create the array
+                    binaryManager.addArray(requestedThread, array);
                 }
-
-                // Create the array
-                binaryManager.addArray(requestedThread, array);
 
                 // Iterate through the data and create/update rows
                 for (int i = 0; i < data.size(); i++) {
                     Object rowData = data.get(i);
-                    if (binaryManager.hasRow(requestedThread, array, String.valueOf(i))) {
-                        // Skip processing if row already exists
-                        debug("Row " + i + " already exists in thread " + requestedThread + ", array " + array);
-                        continue;
-                    }
 
                     String dataKey = UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID();
                     dataKey = dataKey.replaceAll("-", "");
 
-                    binaryManager.addRow(requestedThread, array, String.valueOf(i), dataKey);
+                    if (binaryManager.hasRow(requestedThread, array, String.valueOf(i))) {
+                        // Skip processing if row already exists
+                        debug("Row " + i + " already exists in thread " + requestedThread + ", array " + array);
+                    } else {
+                        binaryManager.addRow(requestedThread, array, String.valueOf(i), dataKey);
+                    }
+
                     NeoGuard.getDataCache().updateData(dataKey, rowData);
                 }
             }
