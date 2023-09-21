@@ -97,14 +97,14 @@ While NeoGuard's magic enhances security, no spell is unbreakable. If a chink in
 
 By using NeoGuard, you acknowledge that security is a journey, not a destination. NeoGuard, its creators, and sorcerers can't be held responsible for unexpected bumps in the road.
 
-**Warning**: NeoGuard is for testing – dragons not included. 🐉
+**Warning**: NeoGuard is for testing – dragons not included - use on own risk. 🐉
 
 ## License 🔐
 
-This project is under a closed-source license – sorry, we're not sharing the magic spell book. 📜🧙‍♂️
+This project is under the Apache 2.0 License.
 
 ## Contributions 🤝
 
-We love enthusiasm, but our code is under lock and key. We appreciate your interest, though! 🙏
+We love enthusiasm, if you want to contribute, open a pull request! 🙏
 
 ## Ready to Embark on Your Secure Quest? 🌟
