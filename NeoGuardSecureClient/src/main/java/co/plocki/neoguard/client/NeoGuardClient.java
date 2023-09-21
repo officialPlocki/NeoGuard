@@ -80,7 +80,7 @@ public class NeoGuardClient {
 
     private static void debug(String message) {
         //System.out.println("Debug [" + NeoGuardClient.class.getSimpleName() + "]: " + message);
-    }
+    }//
 
     public static String connectAndAuthenticate() throws IOException {
         debug("Calling 'connectAndAuthenticate' method.");
