@@ -10,8 +10,11 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 import javax.net.ssl.SSLContext;
+import java.util.Scanner;
 
 public class NeoGuard {
 
@@ -20,6 +23,34 @@ public class NeoGuard {
         neoGuard.start(neoGuard);
 
         Runtime.getRuntime().addShutdownHook(new Thread(neoGuard::stop));
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Type something and press Enter (or CTRL+C to shutdown):");
+        System.out.println("Command list:");
+        System.out.println("createAccess");
+        System.out.println("deleteAccess TOKEN");
+        System.out.println("stop");
+        System.out.println("restartWebService");
+
+        while (true) {
+            if (scanner.hasNextLine()) {
+                String userInput = scanner.nextLine();
+                if(userInput.equalsIgnoreCase("createAccess")) {
+                    System.out.println("Here is your access token:\n\n" + NeoGuard.getKeyManager().registerKey().get(1));
+                } else if(userInput.toLowerCase().startsWith("deleteaccess")) {
+                    NeoGuard.getKeyManager().getKeys().remove(userInput.split(" ")[1]);
+                } else if(userInput.equalsIgnoreCase("stop")) {
+                    System.out.println("Stopping...");
+                    neoGuard.stop();
+                } else if(userInput.equalsIgnoreCase("restartWebService")) {
+                    System.out.println("Restarting...");
+                    neoGuard.stop();
+                    neoGuard.start(neoGuard);
+                    System.out.println("Restarting finished!");
+                }
+            }
+        }
     }
 
     private Undertow server;
@@ -159,18 +190,27 @@ public class NeoGuard {
             throw new RuntimeException("Undertow server isn't running!");
         }
 
-        new Thread(() -> {
-            while (NeoGuard.runningProcesses != 0) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+        Signal.handle(new Signal("INT"), new SignalHandler() {
+            @Override
+            public void handle(Signal signal) {
+                System.out.println("Received SIGINT (Ctrl+C). Force shutting down...");
+                waitForRunningProcessesToBeZero();
+                // Perform cleanup or any necessary operations before exiting
+                System.exit(0);
             }
-        }).start();
+        });
+    }
 
-        binaryManager.save();
-        config.save();
+    public static void waitForRunningProcessesToBeZero() {
+        // Wait until NeoGuard.runningProcesses is 0
+        while (NeoGuard.runningProcesses <= 0) {
+            try {
+                System.out.println("Waiting for NeoGuard.runningProcesses to be 0...");
+                Thread.sleep(1000); // Sleep for 1 second (adjust as needed)
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

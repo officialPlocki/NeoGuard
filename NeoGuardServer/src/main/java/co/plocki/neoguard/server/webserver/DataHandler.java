@@ -95,7 +95,8 @@ public class DataHandler implements HttpHandler {
                         sendResponse(exchange, 200, responseBody.toString());
                     }
 
-                    NeoGuard.runningProcesses -= 1;
+
+                    NeoGuard.getBinaryManager().save();
                 });
 
             } else if (exchange.getRequestHeaders().contains("CONNECT")) {
@@ -147,7 +148,7 @@ public class DataHandler implements HttpHandler {
                 });
             }
 
-            NeoGuard.runningProcesses -= 1;
+            NeoGuard.getBinaryManager().save();
         } else if ("GET".equalsIgnoreCase(exchange.getRequestMethod().toString())) {
             exchange.getRequestReceiver().receiveFullString((httpServerExchange, requestData) -> {
                 NeoGuard.runningProcesses += 1;
@@ -189,7 +190,7 @@ public class DataHandler implements HttpHandler {
                 sendResponse(exchange, 200, respObj.toString());
             });
 
-            NeoGuard.runningProcesses -= 1;
+            NeoGuard.getBinaryManager().save();
         } else {
             debug("Method Not Allowed: " + exchange.getRequestMethod());
             sendResponse(exchange, 405, "");

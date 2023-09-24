@@ -1,1 +1,0 @@
-{"server":{"port":"5551","host":"0.0.0.0"},"security":{"pass_length":"16","ssl_key":"ssl\\private-key.key","local_access_only":"true","ssl":"false","ssl_cert":"ssl\\certificate.crt"},"debug":false,"mapperVersion":"1.0"}
