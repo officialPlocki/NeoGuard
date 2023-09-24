@@ -15,6 +15,13 @@ import javax.net.ssl.SSLContext;
 
 public class NeoGuard {
 
+    public static void main(String[] args) throws Exception {
+        NeoGuard neoGuard = new NeoGuard();
+        neoGuard.start(neoGuard);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(neoGuard::stop));
+    }
+
     private Undertow server;
     private static Config config;
     private static BinaryManager binaryManager;
