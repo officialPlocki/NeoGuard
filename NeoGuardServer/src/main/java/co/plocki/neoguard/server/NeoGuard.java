@@ -43,6 +43,7 @@ public class NeoGuard {
                 } else if(userInput.equalsIgnoreCase("stop")) {
                     System.out.println("Stopping...");
                     neoGuard.stop();
+                    System.exit(0);
                 } else if(userInput.equalsIgnoreCase("restartWebService")) {
                     System.out.println("Restarting...");
                     neoGuard.stop();

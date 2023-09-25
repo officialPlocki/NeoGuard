@@ -162,6 +162,26 @@ public class JSONFile {
         object.remove("mapperVersion");
         object.put("mapperVersion", mapperVersion);
         PrintWriter writer = new PrintWriter(file);
+        writer.println(object.toString());
+        writer.flush();
+        writer.close();
+    }
+
+    /**
+     * If the file doesn't exist, create it. If it does exist, delete it and create it. Then, write the JSON to the file
+     *
+     * @param file The file to save the JSON to.
+     */
+    public void saveBeautiful(File file) throws IOException {
+        if(!file.exists()) {
+            file.createNewFile();
+        } else {
+            file.delete();
+            file.createNewFile();
+        }
+        object.remove("mapperVersion");
+        object.put("mapperVersion", mapperVersion);
+        PrintWriter writer = new PrintWriter(file);
         writer.println(new BeautifulJson().beautiful(object.toString()));
         writer.flush();
         writer.close();
