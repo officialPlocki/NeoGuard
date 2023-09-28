@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class DataCache {
 
-    private final HashMap<String, JSONObject> object = new HashMap<>();
-    private static final HashMap<String, Long> objectTime = new HashMap<>();
+    //private final HashMap<String, JSONObject> object = new HashMap<>();
+    //private static final HashMap<String, Long> objectTime = new HashMap<>();
 
     public void init() {
-        Thread thread = new Thread(() -> {
+        /*Thread thread = new Thread(() -> {
             while (true) {
                 try {
                     Thread.sleep(32000);
@@ -41,15 +41,24 @@ public class DataCache {
             }
         });
         thread.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(thread::interrupt));
+        Runtime.getRuntime().addShutdownHook(new Thread(thread::interrupt));*/
     }
 
     public Object getData(String file) {
-        if(object.containsKey(file)) {
+        /*if(object.containsKey(file)) {
             objectTime.put(file, System.currentTimeMillis());
+
+            System.out.println("returning data: " + object.get(file));
+
             return object.get(file).get("data");
-        } else {
+        } else {*/
             JSONFile jsonFile = new JSONFile("structure" + File.separator + file + ".jdat");
+
+            try {
+                System.out.println("returning data: " + jsonFile.getFileObject());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             if(jsonFile.isNew()) {
 
@@ -63,38 +72,48 @@ public class DataCache {
 
                 return null;
             } else {
-                try {
+                /*try {
                     object.put(file, jsonFile.getFileObject());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                objectTime.put(file, System.currentTimeMillis());
+                objectTime.put(file, System.currentTimeMillis());*/
+                //return object.get(file).get("data");
                 return jsonFile.get("data");
             }
-        }
+        //}
     }
 
     public void updateData(String file, Object data) {
         JSONFile jsonFile = new JSONFile("structure" + File.separator + file + ".jdat");
+
+        System.out.println("data obj: " + data);
+
         jsonFile.put("data", data);
 
-        try {
+        /*try {
             object.put(file, jsonFile.getFileObject());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        objectTime.put(file, System.currentTimeMillis());
+        objectTime.put(file, System.currentTimeMillis());*/
 
         try {
-            jsonFile.save();
+            System.out.println("updated Object: " + jsonFile.getFileObject());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            jsonFile.save(jsonFile.getFileObject());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void deleteData(String file) {
-        object.remove(file);
-        objectTime.remove(file);
+        //object.remove(file);
+        //objectTime.remove(file);
         JSONFile jsonFile = new JSONFile("structure" + File.separator + file + ".jdat");
         jsonFile.getFile().delete();
     }

@@ -37,6 +37,9 @@ public class DataProcessor {
             return response;
         }
 
+        System.out.println("IMPORTANT: " + request);
+
+
         switch (type.toLowerCase()) {
             case "get":
                 response = DataProcessor.processData(request.toString());
@@ -133,7 +136,10 @@ public class DataProcessor {
                 for (Object array : (ArrayList<?>) json.getJSONArray("arrays").toList().get(0)) {
                     arrays.add((String) array);
                 }
+                exception.printStackTrace();
             }
+
+            System.out.println("arrays: " + arrays);
 
             if (binaryManager.hasThread(requestedThread)) {
                 JSONArray arrayData = new JSONArray();
@@ -152,9 +158,13 @@ public class DataProcessor {
 
                                 String location = rowDataLocation.getString("location");
 
-                                //JUMP HERE
+                                // Debug: Print location
+                                System.out.println("Location: " + location);
 
                                 Object data = NeoGuard.getDataCache().getData(location);
+
+                                // Debug: Print data
+                                System.out.println("Temporary debug - data: " + data);
 
                                 rowObj.put("data", data);
                                 rowDataArray.put(rowObj);
@@ -165,10 +175,23 @@ public class DataProcessor {
 
                         JSONObject arrayObj = new JSONObject();
                         arrayObj.put("array", array);
+
+                        // Debug: Print array
+                        System.out.println("Array: " + array);
+
                         arrayObj.put("rows", rowDataArray);
+
+                        // Debug: Print rowDataArray
+                        System.out.println("RowDataArray: " + rowDataArray);
+
                         arrayData.put(arrayObj);
+
+                        System.out.println("arrayData 2: " + arrayData);
                     }
                 }
+
+                // Debug: Print arrayData
+                System.out.println("ArrayData: " + arrayData);
 
                 responseObj.put("dataThread", requestedThread);
                 responseObj.put("arrays", arrays.toArray());
@@ -178,6 +201,7 @@ public class DataProcessor {
                 responseObj.put("status-code", "FAILED");
                 responseObj.put("message", "Thread not found.");
             }
+
         } else if (type.equalsIgnoreCase("post")) {
             String requestedThread = json.getString("dataThread");
             List<String> arrays = new ArrayList<>();
@@ -336,6 +360,9 @@ public class DataProcessor {
 
     public static JSONObject updateRow(String requestedThread, String array, String row, Object newData) {
         debug("Calling 'updateRow' method in DataProcessor class.");
+
+        System.out.println("updating");
+
 
         if (binaryManager.hasRow(requestedThread, array, row)) {
             // Update the row data

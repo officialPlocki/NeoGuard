@@ -37,35 +37,32 @@ public class JSONFile {
     private final boolean isNew;
 
     public JSONFile(String filePath, JSONValue... objects) {
+        boolean isNew1;
         object = null;
         file = new File(Paths.get("").toAbsolutePath() + File.separator + filePath);
         if(!file.exists()) {
             if(!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            PrintWriter writer = null;
-            try {
-                writer = new PrintWriter(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
             JSONObject json = new JSONObject();
             json.put("mapperVersion", mapperVersion);
             for(JSONValue object : objects) {
                 json.put(object.objectName(), object.object());
             }
-            writer.println(new BeautifulJson().beautiful(json.toString()));
-            writer.flush();
-            writer.close();
-            isNew = true;
+
+            try (PrintWriter writer = new PrintWriter(file)) {
+                // Write content to the file
+                writer.println(new BeautifulJson().beautiful(json.toString()));
+                isNew1 = true;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                isNew1 = false;
+            }
+            isNew1 = true;
         } else {
-            isNew = false;
+            isNew1 = false;
         }
+        isNew = isNew1;
         try {
             object = new JSONObject(new String(Files.readAllBytes(file.toPath())));
         } catch (IOException e) {
@@ -109,20 +106,6 @@ public class JSONFile {
         return file;
     }
 
-    /**
-     * It deletes the file, creates a new file, writes the JSON to the file, and then closes the file
-     */
-    public void save() throws IOException {
-        file.delete();
-        file.createNewFile();
-        object.remove("mapperVersion");
-        object.put("mapperVersion", mapperVersion);
-        PrintWriter writer = new PrintWriter(file);
-        writer.println(object.toString());
-        writer.flush();
-        writer.close();
-    }
-
     public void setNull(String key) {
         object.put(key, JSONObject.NULL);
     }
@@ -134,38 +117,64 @@ public class JSONFile {
      */
     public void save(String filePath) throws IOException {
         File newFile = new File(filePath);
-        if(!newFile.exists()) {
+        if (!newFile.exists()) {
             newFile.createNewFile();
         } else {
-            newFile.delete();
+            while (file.exists()) {
+                file.delete();
+            }
             newFile.createNewFile();
         }
+
         object.remove("mapperVersion");
         object.put("mapperVersion", mapperVersion);
-        PrintWriter writer = new PrintWriter(file);
-        writer.println(new BeautifulJson().beautiful(object.toString()));
-        writer.flush();
-        writer.close();
+
+        try (PrintWriter writer = new PrintWriter(newFile)) {
+            writer.println(new BeautifulJson().beautiful(object.toString()));
+        }
+    }
+
+
+    /**
+     * If the file doesn't exist, create it. If it does exist, delete it and create it. Then, write the JSON to the file
+     */
+    public void save() throws IOException {
+        if (!file.exists()) {
+            file.createNewFile();
+        } else {
+            while (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+        }
+
+        object.remove("mapperVersion");
+        object.put("mapperVersion", mapperVersion);
+
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writer.println(new BeautifulJson().beautiful(object.toString()));
+        }
     }
 
     /**
      * If the file doesn't exist, create it. If it does exist, delete it and create it. Then, write the JSON to the file
-     *
-     * @param file The file to save the JSON to.
      */
-    public void save(File file) throws IOException {
-        if(!file.exists()) {
+    public void save(JSONObject object) throws IOException {
+        if (!file.exists()) {
             file.createNewFile();
         } else {
-            file.delete();
+            while (file.exists()) {
+                file.delete();
+            }
             file.createNewFile();
         }
+
         object.remove("mapperVersion");
         object.put("mapperVersion", mapperVersion);
-        PrintWriter writer = new PrintWriter(file);
-        writer.println(new BeautifulJson().beautiful(object.toString()));
-        writer.flush();
-        writer.close();
+
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writer.println(new BeautifulJson().beautiful(object.toString()));
+        }
     }
 
     /**
