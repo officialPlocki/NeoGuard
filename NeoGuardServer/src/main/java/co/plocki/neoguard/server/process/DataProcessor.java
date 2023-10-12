@@ -257,7 +257,7 @@ public class DataProcessor {
         responseData.put("response", responseObj);
         json.put("data", responseData);
 
-        debug("Returning Processed JSON Data: " + json.toString());
+        debug("Returning Processed JSON Data: " + json);
         return json;
     }
 

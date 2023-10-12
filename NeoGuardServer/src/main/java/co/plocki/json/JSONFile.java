@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.UUID;
 
 @SuppressWarnings(
         {
@@ -37,6 +38,7 @@ public class JSONFile {
     private final boolean isNew;
 
     public JSONFile(String filePath, JSONValue... objects) {
+
         boolean isNew1;
         object = null;
         file = new File(Paths.get("").toAbsolutePath() + File.separator + filePath);
@@ -68,6 +70,9 @@ public class JSONFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        printCurrentClass();
     }
 
     /**
@@ -160,20 +165,40 @@ public class JSONFile {
      * If the file doesn't exist, create it. If it does exist, delete it and create it. Then, write the JSON to the file
      */
     public void save(JSONObject object) throws IOException {
-        if (!file.exists()) {
-            file.createNewFile();
-        } else {
-            while (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
+        if (file.exists()) {
+            file.delete();
         }
 
         object.remove("mapperVersion");
         object.put("mapperVersion", mapperVersion);
 
-        try (PrintWriter writer = new PrintWriter(file)) {
+        try (PrintWriter writer = new PrintWriter(file.getPath() + ".tmp")) {
             writer.println(new BeautifulJson().beautiful(object.toString()));
+        }
+
+        if(file.exists()) {
+            file.delete();
+        }
+
+        new File(file.getPath() + ".tmp").renameTo(file);
+    }
+
+    private void printCurrentClass() {
+        // Get the call stack
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+        // The first element (index 0) is the current method call,
+        // the second element (index 1) is the method that invoked the current method,
+        // and its declaring class is the class interacting with this method.
+        if (stackTrace.length >= 2) {
+            String interactingClass = stackTrace[1].getClassName();
+            try {
+                System.out.println("Interacting class: " + interactingClass + " - " + this.getFileObject());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            System.out.println("Unable to determine interacting class.");
         }
     }
 

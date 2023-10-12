@@ -1,0 +1,5 @@
+CREATE TABLE cache (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    file VARCHAR(255) NOT NULL,
+    data VARCHAR(255)
+);
